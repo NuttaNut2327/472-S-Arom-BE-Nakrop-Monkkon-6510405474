@@ -28,12 +28,6 @@ func (d *DiaryPGRepository) Create(ctx context.Context, req *requests.CreateDiar
     "User_Id"
 ) 
 VALUES ($1, $2, $3, $4, $5) 
-RETURNING 
-    "Diary_Id", 
-    "Diary_Date", 
-    "Diary_Emotions", 
-    "Diary_Mood", 
-    "Diary_Description", 
     "User_Id";
 `,
 	req.Date,emotionsArray,req.Mood,req.Description,req.UserID).Scan(&diary.Id, &diary.Date, &emotions , &diary.Mood, &diary.Description, &diary.UserID)
