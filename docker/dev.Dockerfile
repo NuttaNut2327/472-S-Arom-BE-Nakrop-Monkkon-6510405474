@@ -1,21 +1,19 @@
-# Use the official Golang image as the base
-FROM golang:latest
+FROM golang:1.23.7-alpine3.21
 
-# Set the working directory inside the container
 WORKDIR /app
 
 # Install Air for live reloading
-RUN go install github.com/cosmtrek/air@v1.42.0
+RUN go install github.com/cosmtrek/air@v1.42.0 && \
+    ln -s /go/bin/air /usr/local/bin/air  # Symlink air to /usr/local/bin
 
-# Copy go.mod and go.sum first to leverage Docker's caching mechanism
+# Copy dependencies first to leverage caching
 COPY go.mod go.sum ./
 RUN go mod download
 
-# Copy the entire project (excluding files in .dockerignore)
+# Copy the entire project
 COPY . .
 
-# Expose the application port
 EXPOSE 8000
 
-# Set Air as the default command for hot-reloading development
-CMD [ "air" ]
+# Use /bin/sh explicitly to prevent exec format error
+CMD ["/bin/sh", "-c", "air"]
